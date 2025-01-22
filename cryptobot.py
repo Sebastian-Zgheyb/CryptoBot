@@ -163,6 +163,10 @@ def trade():
 
 if __name__ == '__main__':
     print('Press Ctrl-C to stop.')
-    for i in count():
-        trade()
-        print(f'Iteration {i}')
+    try:
+        for i in count():
+            trade()
+            print(f'Iteration {i}')
+    except KeyboardInterrupt:
+        print("Shutting down...")
+        mt5.shutdown()
