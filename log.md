@@ -6,8 +6,8 @@ What the bot is currently capable of:
     1. Authenticates and connects to a trading account using account credentials and environment variables
 
 - Retrieve account and market data
-    2. Fetches account equity and uses it to calculate position sizes
-    3. Retrieves current buy and sell prices of BTCUSD
+    1. Fetches account equity and uses it to calculate position sizes
+    2. Retrieves current buy and sell prices of BTCUSD
 
 - Analyse price movements
     1. Calculates percentage difference between last two 10-minute candles to identify potential trading signals
