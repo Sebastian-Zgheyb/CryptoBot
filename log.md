@@ -143,3 +143,41 @@ even when the equity is below what the user would like to be trading, i.e. the u
 
 Volume means the amount of that currency we are trying to trade, so if there is a 0.01 BTC volume minimum, it means we have to at least
 trade 0.01 BTC at a time.
+
+Log number: 3
+Date and time: 28th Jan, 6pm
+
+I do not see the reason for the bot to constantly spam info about the coin or the difference in the last two closing prices.
+I believe it would be more meaningful for the bot to only print details about BUY orders and SELL orders (when it hits SL or TP).
+Thus, I will modify the bot to only log BUYs and SELLs and not general info every tick. 
+
+Log number: 4
+Date and time: 28th Jan, 7pm
+
+Sweet, the bot now only logs the BUY and SELL orders.
+I've noticed the bot ALWAYS loses money on it's trades. I believe this is due to the fact that, for these testing purposes, 
+it sells after such miniscule increases and decreases in price that the gas/transaction fees always overwhelm whatever profit
+our take profit even would have made.
+
+E.g. If you buy $100 worth of bitcoin, then sell at $101, the transaction fees most trading platforms use will easily
+be greater than that $1 of profit.
+
+Realistically too for non crypto traders, when you buy that $100 of bitcoin, it would appear as $98-99 in your account
+after the transaction fees take place, so yeah those fees are pesky. 
+
+While this is an issue that should be resolved with having more substantial take profit and stop loss percentages,
+it could be worth trying to track the gas fees/spread. 
+
+Taking a look now, there are no fees when it comes to using MT5 through XBTFX!
+
+You just have to deal with the spread, which is the difference between the BUY and SELL prices of the coin.
+
+For example, if the Bid price is $103,000 and the Ask price is $103,100, the spread is $100. 
+This means that, as soon as you place a trade, you start with a loss of $100 (because you bought at $103,100, 
+but if you were to immediately sell, you’d get $103,000). The spread is your "cost of entry" into the trade.
+
+This means that with a spread of, say, 0.5%, whenever I buy, I'm already down 0.5% from when I sell, meaning
+I'd need the price to go up by 0.5% to even BREAK EVEN. I'm selling at like 0.002% or something now LOL.
+
+That's why it never makes profit. Now that I know my bot can sell and buy properly, I'm going to experiment using
+actual figures.

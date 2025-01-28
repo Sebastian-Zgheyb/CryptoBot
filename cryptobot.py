@@ -8,7 +8,8 @@ import MetaTrader5 as mt5
 load_dotenv()
 
 CRYPTO = 'BTCUSD!'
-
+last_logged_ticket = None
+initial_sell_logged = False
 # REAL VALUES
 # Price threshold (percentage)
 # PRICE_THRESHOLD = 3
@@ -19,11 +20,11 @@ CRYPTO = 'BTCUSD!'
 
 # TESTING VALUES
 # Price threshold (percentage)
-PRICE_THRESHOLD = 0.01
+PRICE_THRESHOLD = 0.001
 # Stop loss (percentage)
-STOP_LOSS = 0.0166666666
+STOP_LOSS = 0.00166666666
 # Take profit (percentage)
-TAKE_PROFIT = 0.026999999
+TAKE_PROFIT = 0.0016999999
 
 # Replace in line 113 to choose between a BUY or SELL order
 BUY = mt5.ORDER_TYPE_BUY
@@ -66,7 +67,7 @@ def get_data():
 
 def get_current_prices():
     """Return current buy and sell prices."""
-    print(mt5.symbol_info_tick("BTCUSD!"))
+    # print(mt5.symbol_info_tick("BTCUSD!"))
     current_buy_price = mt5.symbol_info_tick("BTCUSD!")[2]
     # current_sell_price = mt5.symbol_info_tick("BTCUSD!")[1]
     return current_buy_price
@@ -74,6 +75,8 @@ def get_current_prices():
 # this logs when the bot sells so we can see when the bot closes a position
 def log_closed_positions():
     """Log information about closed positions."""
+    global last_logged_ticket, initial_sell_logged
+
     from_date = datetime.now() - timedelta(days=1)
     to_date = datetime.now()
 
@@ -93,10 +96,21 @@ def log_closed_positions():
     
     # find the most recent deal
     most_recent_deal = max(relevant_deals, key=lambda deal: deal.time)
+    
+    if not initial_sell_logged and most_recent_deal.type == 1:  # "1" for sell orders
+        # Skip this deal since it is likely the initial state
+        last_logged_ticket = most_recent_deal.ticket
+        initial_sell_logged = True  # Mark that the first "sell" has been skipped
+        return
+    
     # Log information about the most recent deal
-    print(f"Most recent deal closed: Ticket={most_recent_deal.ticket}, Symbol={most_recent_deal.symbol}, "
-          f"Type={most_recent_deal.type}, Volume={most_recent_deal.volume}, Price={most_recent_deal.price}, "
-          f"Profit={most_recent_deal.profit:.10f}, Time={datetime.fromtimestamp(most_recent_deal.time)}")
+    if most_recent_deal.ticket != last_logged_ticket:
+        last_logged_ticket = most_recent_deal.ticket
+        print("SELL ORDER!!!")
+        print(f"Most recent deal closed: Ticket={most_recent_deal.ticket}, Symbol={most_recent_deal.symbol}, "
+            f"Type={most_recent_deal.type}, Volume={most_recent_deal.volume}, Price={most_recent_deal.price}, "
+            f"Profit={most_recent_deal.profit:.10f}, Time={datetime.fromtimestamp(most_recent_deal.time)}\n")
+        
 
     
 def trade():
@@ -123,7 +137,7 @@ def trade():
     # print(difference, PRICE_THRESHOLD)
     # now, we perform our logic checks
     if difference > PRICE_THRESHOLD:
-        print(f'dif 1: {CRYPTO}, {difference}')
+        # print(f'dif 1: {CRYPTO}, {difference}')
         # Pause for 8 seconds to make sure the increase is sustained
         time.sleep(8)
 
@@ -135,9 +149,9 @@ def trade():
         difference = (candles['close'][-1] - candles['close'][-2]) / candles['close'][-2] * 100
 
         if difference > PRICE_THRESHOLD:
-            print(f'dif 2: {CRYPTO}, {difference}')
+            # print(f'dif 2: {CRYPTO}, {difference}')
             price = mt5.symbol_info_tick(CRYPTO).bid
-            print(f'{CRYPTO} is up {str(difference)}% in the last 5 minutes, opening BUY position.')
+            # print(f'{CRYPTO} is up {str(difference)}% in the last 5 minutes, trying to open BUY position.')
 
             # prepare the trade request
             if not mt5.initialize():
@@ -154,10 +168,11 @@ def trade():
                     print(f'{CRYPTO} is not visible, trying to switch on')
                     if not mt5.symbol_select(CRYPTO, True):
                         print('symbol_select() failed, exit', CRYPTO)
+                        
                 
                 # this represents 5% equity. the minimum order is 0.01 BTC. Increase equity share if retcode = 10014
                 # lot = float(round(((equity / 20) / current_buy_price), 2))
-                print(lot)
+                # print(lot)
 
                 if ORDER_TYPE == BUY:
                     sl = price - (price * STOP_LOSS) / 100
@@ -184,31 +199,36 @@ def trade():
                 result = mt5.order_send(request)
 
                 # check the execution result
-                print(f'1. order_send(): by {CRYPTO} {lot} lots at {price}')
+                # print(f'1. order_send(): by {CRYPTO} {lot} lots at {price}')
 
                 if result.retcode != mt5.TRADE_RETCODE_DONE:
                     print(f'2. order_send() failed, retcode={result.retcode}')
-
+                print(f"BUY ORDER!!!")
                 # print the order result - anything else than retcode=10009 is an error in the trading request
-                print(f'2. order_send done, {result}')
-                print(f'opened position with POSITION_TICKET={result.order}')
+                print(f'Buy order complete: {result}\n')
+
+                # print(f'opened position with POSITION_TICKET={result.order}')
 
             else:
-                print(f'BUY signal detected, but {CRYPTO} has {len(positions)} active trade')
+                pass
+                # print(f'BUY signal detected, but {CRYPTO} has {len(positions)} active trade')
         else:
             pass
 
     else:
         if orders or positions:
-            print('BUY signal detected but there is an already an active trade')
+            # print('BUY signal detected but there is an already an active trade')
+            pass
         else: 
+            # uncomment this if you feel lonely with how the terminal print anything when the difference is too low
             print(f'Difference is only: {round((difference), 2)}%. Trying again...')
+            pass
 
 if __name__ == '__main__':
     print('Press Ctrl-C to stop.')
     try:
         for i in count():
-            print(f'Iteration {i + 1}')
+            # print(f'Iteration {i + 1}')
             trade()
             log_closed_positions()
     except KeyboardInterrupt:
