@@ -197,3 +197,11 @@ For now, I'm going to do a test run with a different configuration (here's a rem
 Test run will go from 8-9pm. Leetcode medium in the meantime 'smiley face'.
 
 I also made the account id an environment variable.
+
+Log number: 6
+Date and time: 29th Jan, 12:30am
+
+My bot never ended up buying anything. It appears it turned off shortly after I left to go to the gym anyway.
+Will add a note that the user has to make it so their PC does not go to sleep, or find another workaround.
+
+Big things tomorrow.
