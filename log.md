@@ -67,14 +67,14 @@ Functionality goals include:
         - Send alerts via email for executed trades or critical errors
 
 2. Implement backtesting
-    - Historial Testing:
+    - Historical Testing:
         - Add functionality to backtest the trading strategy on historical data.
         - Simulate trades using past price data to evaluate the strategy's profitability
 
     - Metrics Calculation:
         - Measure performance metrics like profit/loss, drawdowns, and Sharpe ratio during backtesting
 
-3. Risk Maangement Enhancements
+3. Risk Management Enhancements
     - Dynamic Position Sizing: 
         - Adjust position sizes based on volatility or account equity to minimise risk
     
@@ -125,5 +125,21 @@ Functionality goals include:
         - Use ML algorithms to predict price movement based on historical patterns.
 
 
-Log number:
-Date and time: 
+Log number: 2
+Date and time: 28th January, 5:55pm
+
+I figured it could be confusing for some users to understand how the bot sells. 
+When an order is made, the bot automatically sends the corresponding take profit and stop loss limits we set in our code.
+When the price of the cryptocurrency we are trading soars up to the take profit percentage, or plummets to the stop loss percentages, the bot SELLS.
+Originally, there was no logging for this event. Now, there is. 
+
+Additionally, users must make sure to enable algorithmic trading on MT5 or the bot won't trade.
+This is done by going to MT5 -> Tools -> Options -> Expert Advisors -> Check algorithmic trading.
+I also fixed an issue where the bot would try to execute the trade with a volume below the minimum volume of that cryptocurrency.
+The original creator of this bot recommended increasing the amount of equity we allocate, but I decided to make the bot choose between 
+the amount of equity we try to allocate or the minimum volume required for that coin. For testing purposes, this will suffice,
+but for a user using real money, I will ensure it relies on the user's equity solely to prevent it always performing trades
+even when the equity is below what the user would like to be trading, i.e. the user can't afford such trades or didn't intend to make them.
+
+Volume means the amount of that currency we are trying to trade, so if there is a 0.01 BTC volume minimum, it means we have to at least
+trade 0.01 BTC at a time.
