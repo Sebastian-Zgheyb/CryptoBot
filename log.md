@@ -181,3 +181,19 @@ I'd need the price to go up by 0.5% to even BREAK EVEN. I'm selling at like 0.00
 
 That's why it never makes profit. Now that I know my bot can sell and buy properly, I'm going to experiment using
 actual figures.
+
+Log number: 5
+Date and time: 28th Jan, 8pm
+
+There is still plenty to add to the bot. 
+
+I had thoughts about creating a DCA bot, which could be a fun project for sure, but it would be simpler than this 
+project, so I think I will learn more trying to create something more complex like I am with this.
+
+It's hard to test with wanting a 3% price differnece between the last two 10 minute candles - it is a bit unrealistic. 
+
+For now, I'm going to do a test run with a different configuration (here's a reminder for me to make a config file too!)
+
+Test run will go from 8-9pm. Leetcode medium in the meantime 'smiley face'.
+
+I also made the account id an environment variable.

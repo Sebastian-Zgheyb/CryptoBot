@@ -12,19 +12,19 @@ last_logged_ticket = None
 initial_sell_logged = False
 # REAL VALUES
 # Price threshold (percentage)
-# PRICE_THRESHOLD = 3
-# # Stop loss (percentage)
-# STOP_LOSS = 5
-# # Take profit (percentage)
-# TAKE_PROFIT = 8
+PRICE_THRESHOLD = 0.6
+# Stop loss (percentage)
+STOP_LOSS = 0.8
+# Take profit (percentage)
+TAKE_PROFIT = 1.8
 
 # TESTING VALUES
 # Price threshold (percentage)
-PRICE_THRESHOLD = 0.001
+# PRICE_THRESHOLD = 0.001
 # Stop loss (percentage)
-STOP_LOSS = 0.00166666666
+# STOP_LOSS = 0.00166666666
 # Take profit (percentage)
-TAKE_PROFIT = 0.0016999999
+# TAKE_PROFIT = 0.0016999999
 
 # Replace in line 113 to choose between a BUY or SELL order
 BUY = mt5.ORDER_TYPE_BUY
@@ -33,19 +33,20 @@ ORDER_TYPE = BUY
 
 # connect to the trade account without specifying a password and a server
 if not mt5.initialize():
-    print("initialize() failed, error code =", mt5.last_error())
+    print("MT5 initialize failed with error code =", mt5.last_error())
     quit()
 
 # account number in the top left corner of the MT5 terminal window
 # the terminal database password is applied if connection data is set to be remembered
-account_number = 2121944313
+account_number = int(os.getenv("MT5_USERID")) # Get user from environment variable
 password = os.getenv("MT5_PASSWORD")  # Get password from environment variable
+# print(account_number)
 authorized = mt5.login(account_number, password=password, server="XBTFX-MetaTrader5")
 
 if authorized:
     print(f'connected to account #{account_number}')
 else:
-    print(f'failed to connect at account #{account_number}, error code: {mt5.last_error()}')
+    print(f'failed to connect to account #{account_number}, error code: {mt5.last_error()}')
 
 # store the equity of your account
 account_info = mt5.account_info()
@@ -91,7 +92,7 @@ def log_closed_positions():
     ]
 
     if not relevant_deals:
-        print("No recent deals to log")
+        # print("No recent deals to log")
         return
     
     # find the most recent deal
@@ -122,7 +123,6 @@ def trade():
     symbol_info = mt5.symbol_info(CRYPTO)
     raw_lot = (equity / 20) / current_buy_price  # Risk management formula
     lot = max(symbol_info.volume_min, round(raw_lot / symbol_info.volume_step) * symbol_info.volume_step)
-    # print(lot)
 
     # keep the sleep for debugging because otherwise it iterates too fast
     # time.sleep(2)
@@ -199,13 +199,13 @@ def trade():
                 result = mt5.order_send(request)
 
                 # check the execution result
-                # print(f'1. order_send(): by {CRYPTO} {lot} lots at {price}')
+                print(f'Trying to buy {CRYPTO} {lot} lots at {price}')
 
                 if result.retcode != mt5.TRADE_RETCODE_DONE:
-                    print(f'2. order_send() failed, retcode={result.retcode}')
-                print(f"BUY ORDER!!!")
-                # print the order result - anything else than retcode=10009 is an error in the trading request
-                print(f'Buy order complete: {result}\n')
+                    print(f'Buy failed, return code={result.retcode}')
+                else:
+                    print(f"BUY ORDER!!!")
+                    print(f'Buy order complete: {result}\n')
 
                 # print(f'opened position with POSITION_TICKET={result.order}')
 
@@ -221,7 +221,7 @@ def trade():
             pass
         else: 
             # uncomment this if you feel lonely with how the terminal print anything when the difference is too low
-            print(f'Difference is only: {round((difference), 2)}%. Trying again...')
+            # print(f'Difference is only: {round((difference), 2)}%. Trying again...')
             pass
 
 if __name__ == '__main__':
