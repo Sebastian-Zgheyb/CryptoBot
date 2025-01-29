@@ -19,6 +19,9 @@ config = load_config()
 CRYPTO = config["crypto"]
 PRICE_THRESHOLD = config["price_threshold"]
 ORDER_TYPE = mt5.ORDER_TYPE_BUY if config["order_type"] == "BUY" else mt5.ORDER_TYPE_SELL
+ATR_MULTIPLIER_SL = config["atr_multiplier_sl"]
+ATR_MULTIPLIER_TP = config["atr_multiplier_tp"]
+RISK_PERCENTAGE = config["risk_percentage"]
 server = config["server"]
 
 # Global variables
@@ -49,14 +52,12 @@ else:
     equity = float(account_info[10])
 
 def get_dates():
-    """Use dates to define the range of our dataset in the `get_data() function"""
-    utc_from = datetime.today() - timedelta(days=1)
-    return utc_from, datetime.now()
+    """Use dates to define the range of our dataset."""
+    return datetime.today() - timedelta(days=1), datetime.now()
 
 def get_data():
     """Download one day of 10 minute candles, along with the buy and sell prices for bitcoin."""
-    utc_from = datetime.today() - timedelta(days=1)
-    return mt5.copy_rates_range('BTCUSD!', mt5.TIMEFRAME_M10, utc_from, datetime.now())
+    return mt5.copy_rates_range('BTCUSD!', mt5.TIMEFRAME_M10, datetime.today() - timedelta(days=1), datetime.now())
 
 def get_current_price():
     """Return current buy price."""
@@ -109,8 +110,7 @@ def trade():
 
     # Calculate ATR
     atr = calculate_atr(candles)
-    risk_percentage = 0.01  # Adjust as needed
-    risk_amount = equity * risk_percentage  # Risk in dollar terms
+    risk_amount = equity * RISK_PERCENTAGE  # Risk in dollar terms
 
     # ATR-based position sizing
     lot = max(symbol_info.volume_min, round((risk_amount / atr) / symbol_info.volume_step) * symbol_info.volume_step)
@@ -127,8 +127,8 @@ def trade():
         if difference > PRICE_THRESHOLD and not positions and not orders:
             price = mt5.symbol_info_tick(CRYPTO).bid
 
-            sl = price - (atr * 1.5) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price + (atr * 1.5)
-            tp = price + (atr * 2.5) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price - (atr * 2.5)
+            sl = price - (atr * ATR_MULTIPLIER_SL) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price + (atr * ATR_MULTIPLIER_SL)
+            tp = price + (atr * ATR_MULTIPLIER_TP) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price - (atr * ATR_MULTIPLIER_TP)
 
             request = {
                 'action': mt5.TRADE_ACTION_DEAL,

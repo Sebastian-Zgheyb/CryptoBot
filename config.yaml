@@ -2,7 +2,10 @@
 crypto: "BTCUSD!"
 order_type: "BUY"  
 server: "XBTFX-MetaTrader5"
-
+price_threshold: 0.6
+atr_multiplier_sl: 1.5
+atr_multiplier_tp: 2.5
+risk_percentage: 0.01
 # Account details (referencing .env variables)
 account_number_env: "MT5_ACCOUNT_NUMBER"
 password_env: "MT5_PASSWORD"

@@ -247,3 +247,14 @@ For non-investors, here are definitions for the 4 main performance metrics my bo
     - Profit Factor: Ratio of total profit to total loss.
     - Max Drawdown: The worst peak-to-trough loss percentage.
     - Average R-Multiple: Measures the return-to-risk ratio.
+
+
+Log number: 10
+Date and time: 30th Jan, 10:40am
+
+More performance metrics!!!
+
+I realigned my backtesting to use my trading strategy, and used matplotlib to plot a bunch of useful graphs, such as a graph showing our equity along all the trades,
+a graph to highlight the overall risk and reward of our trades, the drawdowns and so on!
+
+I also added a 1% trading fee to make it more realistic to the real markets.
