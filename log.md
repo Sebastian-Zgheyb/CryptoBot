@@ -232,6 +232,18 @@ limiting the risk to a fixed % of account balance.
 Rather than have a set stop loss and take profit, I will have them be dynamic based on the volatility of the market too.
 
 Log number: 9
-Date and time: 29th Jan, 9:30pm
+Date and time: 29th Jan, 11:38pm
 
 BACKTESTING!!
+
+I implemented backtesting. For investors, backtesting is vital. Being able to test your strategy on prior data is essential to getting a better understanding
+on if your strategy works or not.
+
+Now, my bot can load historical data using MT5, simulate my strategy on past data, log profits, drawdowns, and win rates, and measure my performance against different 
+performance metrics!
+
+For non-investors, here are definitions for the 4 main performance metrics my bot measures:
+    - Win/Loss Ratio: How often the strategy wins vs. loses.
+    - Profit Factor: Ratio of total profit to total loss.
+    - Max Drawdown: The worst peak-to-trough loss percentage.
+    - Average R-Multiple: Measures the return-to-risk ratio.
