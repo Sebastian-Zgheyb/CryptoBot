@@ -212,3 +212,21 @@ Date and Time: 29th Jan, 11:40am
 Made code a lot cleaner and streamlined it to get rid of those extra error cases which don't occur to make it more clear and concise.
 Added a configuration file so the user never needs to change or hardcode values in the main python file to change parameters. 
 Got rid of the comments where they aren't needed to reduce the messiness (e.g. comments I made for myself while coding the bot).
+
+Log number: 8
+Date and Time: 29th Jan, 8:50pm
+
+POSITION SIZING
+
+As of now my bot uses regular position sizing. This means that it does not take in to account the risk per trade in terms of the 
+stop loss that I set. I'm not calculating how much I'm willing to lose (e.g. 1% of the account's equity) if the trade hits the stop loss.
+What I have now is more just allocating a set amount of equity rather than true risk-based sizing.
+
+The position sizing I use now also does not account for market conditions like volatility, which is often used in professional trading
+(e.g. ATR-based position sizing, ATR: average true range) which helps traders set stop losses and position sizes to manage risk more effectively depending on the market.
+
+I'm going to now implement ATR-Based position sizing, making my bot now choose the amount of equity it allocates to a trade based on how 
+volatile the market is, rather than always allocating a set amount each time! I'll also add some risk management to the bot,
+limiting the risk to a fixed % of account balance.
+
+Rather than have a set stop loss and take profit, I will have them be dynamic based on the volatility of the market too.

@@ -5,6 +5,7 @@ from itertools import count
 import time
 import MetaTrader5 as mt5
 import yaml
+import pandas as pd
 
 load_dotenv()
 
@@ -17,9 +18,6 @@ config = load_config()
 # Assign config values
 CRYPTO = config["crypto"]
 PRICE_THRESHOLD = config["price_threshold"]
-STOP_LOSS = config["stop_loss"]
-TAKE_PROFIT = config["take_profit"]
-EQUITY_DIVIDER = config["equity_divider"]
 ORDER_TYPE = mt5.ORDER_TYPE_BUY if config["order_type"] == "BUY" else mt5.ORDER_TYPE_SELL
 server = config["server"]
 
@@ -62,8 +60,17 @@ def get_data():
 
 def get_current_price():
     """Return current buy price."""
-    current_buy_price = mt5.symbol_info_tick("BTCUSD!")[2]
-    return current_buy_price
+    return mt5.symbol_info_tick(CRYPTO).bid
+
+def calculate_atr(data, period=14):
+    """Calculate the Average True Range (ATR) over a given period."""
+    df = pd.DataFrame(data)
+    df['tr1'] = df['high'] - df['low']
+    df['tr2'] = abs(df['high'] - df['close'].shift(1))
+    df['tr3'] = abs(df['low'] - df['close'].shift(1))
+    df['true_range'] = df[['tr1', 'tr2', 'tr3']].max(axis=1)
+    df['atr'] = df['true_range'].rolling(window=period).mean()
+    return df['atr'].iloc[-1]  # Return latest ATR value
 
 def log_closed_positions():
     """Log information about closed positions."""
@@ -78,7 +85,6 @@ def log_closed_positions():
     
     # Filter for sell deals related to the bot
     sell_deals = [deal for deal in deals if deal.symbol == CRYPTO and deal.magic == 100 and deal.type == mt5.ORDER_TYPE_SELL]
-
     if not sell_deals:
         return
     
@@ -99,14 +105,17 @@ def log_closed_positions():
 def trade():
     """Determine if we should trade and if so, send requests to MT5."""
     candles = get_data()
-    current_buy_price = get_current_price()
-
     symbol_info = mt5.symbol_info(CRYPTO)
-    raw_lot = (equity / EQUITY_DIVIDER) / current_buy_price
-    lot = max(symbol_info.volume_min, round(raw_lot / symbol_info.volume_step) * symbol_info.volume_step)
+
+    # Calculate ATR
+    atr = calculate_atr(candles)
+    risk_percentage = 0.01  # Adjust as needed
+    risk_amount = equity * risk_percentage  # Risk in dollar terms
+
+    # ATR-based position sizing
+    lot = max(symbol_info.volume_min, round((risk_amount / atr) / symbol_info.volume_step) * symbol_info.volume_step)
 
     difference = (candles['close'][-1] - candles['close'][-2]) / candles['close'][-2] * 100
-
     positions = mt5.positions_get(symbol=CRYPTO)
     orders = mt5.orders_get(symbol=CRYPTO)
 
@@ -118,8 +127,8 @@ def trade():
         if difference > PRICE_THRESHOLD and not positions and not orders:
             price = mt5.symbol_info_tick(CRYPTO).bid
 
-            sl = price - (price * STOP_LOSS) / 100 if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price + (price * STOP_LOSS) / 100
-            tp = price + (price * TAKE_PROFIT) / 100 if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price - (price * TAKE_PROFIT) / 100
+            sl = price - (atr * 1.5) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price + (atr * 1.5)
+            tp = price + (atr * 2.5) if ORDER_TYPE == mt5.ORDER_TYPE_BUY else price - (atr * 2.5)
 
             request = {
                 'action': mt5.TRADE_ACTION_DEAL,
