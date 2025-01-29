@@ -230,3 +230,8 @@ volatile the market is, rather than always allocating a set amount each time! I'
 limiting the risk to a fixed % of account balance.
 
 Rather than have a set stop loss and take profit, I will have them be dynamic based on the volatility of the market too.
+
+Log number: 9
+Date and time: 29th Jan, 9:30pm
+
+BACKTESTING!!

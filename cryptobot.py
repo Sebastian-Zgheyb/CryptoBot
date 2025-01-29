@@ -55,8 +55,8 @@ def get_dates():
 
 def get_data():
     """Download one day of 10 minute candles, along with the buy and sell prices for bitcoin."""
-    utc_from, utc_to = get_dates()
-    return mt5.copy_rates_range('BTCUSD!', mt5.TIMEFRAME_M10, utc_from, utc_to)
+    utc_from = datetime.today() - timedelta(days=1)
+    return mt5.copy_rates_range('BTCUSD!', mt5.TIMEFRAME_M10, utc_from, datetime.now())
 
 def get_current_price():
     """Return current buy price."""
