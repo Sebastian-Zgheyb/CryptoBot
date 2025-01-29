@@ -1,0 +1,14 @@
+# Trading settings
+crypto: "BTCUSD!"
+price_threshold: 0.6  # Percentage increase needed to trigger a trade
+stop_loss: 0.8  # Stop loss percentage
+take_profit: 1.8  # Take profit percentage
+order_type: "BUY"  
+server: "XBTFX-MetaTrader5"
+
+# Risk management
+equity_divider: 20  # Determines lot size
+
+# Account details (referencing .env variables)
+account_number_env: "MT5_ACCOUNT_NUMBER"
+password_env: "MT5_PASSWORD"

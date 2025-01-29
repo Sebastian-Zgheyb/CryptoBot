@@ -205,3 +205,10 @@ My bot never ended up buying anything. It appears it turned off shortly after I 
 Will add a note that the user has to make it so their PC does not go to sleep, or find another workaround.
 
 Big things tomorrow.
+
+Log number: 7
+Date and Time: 29th Jan, 11:40am
+
+Made code a lot cleaner and streamlined it to get rid of those extra error cases which don't occur to make it more clear and concise.
+Added a configuration file so the user never needs to change or hardcode values in the main python file to change parameters. 
+Got rid of the comments where they aren't needed to reduce the messiness (e.g. comments I made for myself while coding the bot).
