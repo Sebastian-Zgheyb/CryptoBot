@@ -51,7 +51,7 @@ def backtest(symbol=CRYPTO, timeframe=mt5.TIMEFRAME_M10):
     wins, losses = 0, 0
     total_profit, total_loss = 0, 0
     trade_results = []
-    print(data)
+    
     for i in range(14, len(data) - 1):  # Start after ATR period
         price = data['close'][i]
         atr = data['atr'][i]
@@ -62,7 +62,7 @@ def backtest(symbol=CRYPTO, timeframe=mt5.TIMEFRAME_M10):
         # Define SL and TP
         sl = price - ATR_MULTIPLIER_SL * atr
         tp = price + ATR_MULTIPLIER_TP * atr
-        print(sl, tp)
+        
         # Calculate price percentage difference
         difference = abs((price - data['close'][i - 1]) / data['close'][i - 1] * 100)
         
