@@ -1,6 +1,6 @@
 # 📌 CryptoBot: Automated Trading with MetaTrader 5
 
-This is an automated trading bot developed using Python and the **MetaTrader 5 API** to execute cryptocurrency trades based on real-time market analysis. It utilizes **stop loss and take profit orders, ATR-based position sizing, and backtesting** to optimize trading efficiency and allow users to test their strategies.
+This is an automated trading bot developed using Python and the **MetaTrader 5 API** to execute cryptocurrency trades based on real-time market analysis. It utilises **stop loss and take profit orders, ATR-based position sizing, and backtesting** to optimise trading efficiency and allow users to test their strategies.
 
 ---
 
@@ -21,7 +21,7 @@ You need an account to access live or historical market data.
 2. Go to **File** → **Open an Account**.
 3. Choose a broker (or use the default MetaQuotes demo server).
 4. Fill in the required details and create your demo account.
-5. Once set up, go to **Tools** → **Options** → **Expert Advisors** and check **"Allow WebRequest for listed URLs"**.
+5. Once set up, go to **Tools** → **Options** → **Expert Advisors** and check **"Allow WebRequest for listed URLs"** along with **"Allow algorithmic trading"**.
 
 ---
 
@@ -57,7 +57,7 @@ else:
 ---
 
 ### **5️⃣ Run the Backtest**
-To test the bot before live trading, run:
+To backtest the bot, run:
 
 ```sh
 python backtest.py
